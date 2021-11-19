@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:taxirev/customecolors/palete.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_sunmi_printer/flutter_sunmi_printer.dart';
+import 'package:taxirev/services/saloncar.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
 //import 'package:http/http.dart' as http;
@@ -22,71 +23,9 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  //country
-  // final _currencies = [
-  //   "Food",
-  //   "Transport",
-  //   "Personal",
-  //   "Shopping",
-  //   "Medical",
-  //   "Rent",
-  //   "Movie",
-  //   "Salary"
-  // ];
-  //  final List data;
-  // Future<String> getData() async {
-  //   http.Response response = await http.get(
-  //       Uri.encodeFull("https://rehotek.com/service/API/public/api/accounts"),
-  //       headers: {"Accept": "application/json"});
-  //   setState(() {
-  //     data = json.decode(response.body);
-  //   });
-  //   if (response.statusCode == 200) {
-  //     return 'success';
-  //   } else {
-  //     throw Exception('Failed to load ');
-  //   }
-  // }
   void _print() async {
     // Test regular text
-    SunmiPrinter.hr();
-    SunmiPrinter.text(
-      'Test Sunmi Printer',
-      styles: SunmiStyles(align: SunmiAlign.center),
-    );
-    SunmiPrinter.hr();
-
-    // Test align
-    SunmiPrinter.text(
-      'left',
-      styles: SunmiStyles(bold: true, underline: true),
-    );
-    SunmiPrinter.text(
-      'center',
-      styles:
-          SunmiStyles(bold: true, underline: true, align: SunmiAlign.center),
-    );
-    SunmiPrinter.text(
-      'right',
-      styles: SunmiStyles(bold: true, underline: true, align: SunmiAlign.right),
-    );
-
-    // Test text size
-    SunmiPrinter.text('Extra small text',
-        styles: SunmiStyles(size: SunmiSize.xs));
-    SunmiPrinter.text('Medium text', styles: SunmiStyles(size: SunmiSize.md));
-    SunmiPrinter.text('Large text', styles: SunmiStyles(size: SunmiSize.lg));
-    SunmiPrinter.text('Extra large text',
-        styles: SunmiStyles(size: SunmiSize.xl));
-
-    // Test row
-    SunmiPrinter.row(
-      cols: [
-        SunmiCol(text: 'col1', width: 4),
-        SunmiCol(text: 'col2', width: 4, align: SunmiAlign.center),
-        SunmiCol(text: 'col3', width: 4, align: SunmiAlign.right),
-      ],
-    );
+    //
 
     // Test image
     ByteData bytes = await rootBundle.load('images/r2.png');
@@ -94,12 +33,19 @@ class _DashboardState extends State<Dashboard> {
     final imgData = base64.encode(Uint8List.view(buffer));
     SunmiPrinter.image(imgData);
 
-    SunmiPrinter.emptyLines(3);
+    SunmiPrinter.row();
   }
 
   TextEditingController CarId = TextEditingController();
   TextEditingController Desc = TextEditingController();
   TextEditingController Amount = TextEditingController();
+  late Future<Album> futureAlbum;
+  @override
+  void initState() {
+    futureAlbum = fetchAlbum();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -137,35 +83,56 @@ class _DashboardState extends State<Dashboard> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      TextField(
-                        controller: CarId,
-                        decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.info_outlined),
-                            label: Text('Car ID'),
-                            border: OutlineInputBorder()),
-                        readOnly: true,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextField(
-                        controller: Desc,
-                        decoration: const InputDecoration(
-                            prefix: Icon(Icons.car_rental_rounded),
-                            label: Text('Car Type'),
-                            border: OutlineInputBorder()),
-                        readOnly: true,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextField(
-                        controller: Amount,
-                        decoration: const InputDecoration(
-                            prefix: Icon(Icons.money),
-                            label: Text('Amount'),
-                            border: OutlineInputBorder()),
-                        readOnly: true,
+                      FutureBuilder<Album>(
+                        future: fetchAlbum(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            CarId.text = snapshot.data!.id.toString();
+                            Desc.text = snapshot.data!.description.toString();
+                            Amount.text = snapshot.data!.amount.toString();
+                            return Form(
+                              child: Column(
+                                children: [
+                                  TextField(
+                                    controller: CarId,
+                                    decoration: const InputDecoration(
+                                        prefixIcon: Icon(Icons.info_outlined),
+                                        label: Text('Car ID'),
+                                        border: OutlineInputBorder()),
+                                    readOnly: true,
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  TextField(
+                                    controller: Desc,
+                                    decoration: const InputDecoration(
+                                        prefixIcon:
+                                            Icon(Icons.car_repair_rounded),
+                                        label: Text('Car Type'),
+                                        border: OutlineInputBorder()),
+                                    readOnly: true,
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  TextField(
+                                    controller: Amount,
+                                    decoration: const InputDecoration(
+                                        prefixIcon: Icon(Icons.money),
+                                        label: Text('Amount'),
+                                        border: OutlineInputBorder()),
+                                    readOnly: true,
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else if (snapshot.hasError) {
+                            return const Text(
+                                "No data fetched!Please try again");
+                          }
+                          return const CircularProgressIndicator();
+                        },
                       ),
                       const SizedBox(
                         height: 20,
