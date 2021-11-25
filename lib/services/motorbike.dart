@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:http/http.dart' as http;
 
-Future<Salon> fetchSalon() async {
+Future<Motor> fetchMotor() async {
   final response = await http.get(
-      'https://www.rehotek.com/service/taxirevService/API/public/api/carsid/1');
+      'https://www.rehotek.com/service/taxirevService/API/public/api/carsid/3');
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
-    return Salon.fromJson(jsonDecode(response.body));
+    return Motor.fromJson(jsonDecode(response.body));
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
@@ -21,15 +21,15 @@ Future<Salon> fetchSalon() async {
   }
 }
 
-class Salon {
+class Motor {
   final int id;
   final String description;
   final String amount;
 
-  Salon({required this.id, required this.description, required this.amount});
+  Motor({required this.id, required this.description, required this.amount});
 
-  factory Salon.fromJson(Map<String, dynamic> json) {
-    return Salon(
+  factory Motor.fromJson(Map<String, dynamic> json) {
+    return Motor(
       id: json['id'],
       description: json['description'],
       amount: json['amount'],
