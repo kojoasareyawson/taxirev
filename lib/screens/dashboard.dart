@@ -1,22 +1,13 @@
-// ignore_for_file: non_constant_identifier_names
-
-//import 'dart:convert';
-
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:taxirev/customecolors/palete.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_sunmi_printer/flutter_sunmi_printer.dart';
 import 'package:taxirev/services/urbancar.dart';
 import 'package:taxirev/services/saloncar.dart';
 import 'package:taxirev/services/motorbike.dart';
 import 'package:taxirev/services/tricycle.dart';
-
-// ignore: import_of_legacy_library_into_null_safe
-//import 'package:http/http.dart' as http;
+import 'package:taxirev/controls/textcontrols.dart';
+import 'package:taxirev/sunmi/sunmiprint.dart';
+import 'package:taxirev/screens/addvehicle.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -26,79 +17,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  void _print() async {
-    // Test regular text
-    //
-    SunmiPrinter.hr(); // prints a full width separator
-    SunmiPrinter.text(
-      'Test Sunmi Printer',
-      styles: const SunmiStyles(align: SunmiAlign.center),
-    );
-    SunmiPrinter.hr();
-
-// Test align
-    SunmiPrinter.text(
-      'left',
-      styles: const SunmiStyles(bold: true, underline: true),
-    );
-    SunmiPrinter.text(
-      'center',
-      styles: const SunmiStyles(
-          bold: true, underline: true, align: SunmiAlign.center),
-    );
-    SunmiPrinter.text(
-      'right',
-      styles: const SunmiStyles(
-          bold: true, underline: true, align: SunmiAlign.right),
-    );
-
-// Test text size
-    SunmiPrinter.text('Extra small text',
-        styles: const SunmiStyles(size: SunmiSize.xs));
-    SunmiPrinter.text('Medium text',
-        styles: const SunmiStyles(size: SunmiSize.md));
-    SunmiPrinter.text('Large text',
-        styles: const SunmiStyles(size: SunmiSize.lg));
-    SunmiPrinter.text('Extra large text',
-        styles: const SunmiStyles(size: SunmiSize.xl));
-
-// Test row
-    SunmiPrinter.row(
-      cols: [
-        SunmiCol(text: 'col1', width: 4),
-        SunmiCol(text: 'col2', width: 4, align: SunmiAlign.center),
-        SunmiCol(text: 'col3', width: 4, align: SunmiAlign.right),
-      ],
-    );
-    // Test image
-    ByteData bytes = await rootBundle.load('images/r2.png');
-    final buffer = bytes.buffer;
-    final imgData = base64.encode(Uint8List.view(buffer));
-    SunmiPrinter.image(imgData);
-
-    SunmiPrinter.row();
-  }
-
-  //Salon Text Controlls
-  TextEditingController CarId = TextEditingController();
-  TextEditingController Desc = TextEditingController();
-  TextEditingController Amount = TextEditingController();
-
-  //Urvan Text Controls
-  TextEditingController UrvanId = TextEditingController();
-  TextEditingController UrvanDesc = TextEditingController();
-  TextEditingController UrAmount = TextEditingController();
-
-  //Motor bike text controls
-  TextEditingController MotorId = TextEditingController();
-  TextEditingController MotorDesc = TextEditingController();
-  TextEditingController MotorAmount = TextEditingController();
-
-  //Motor bike text controls
-  TextEditingController TriId = TextEditingController();
-  TextEditingController TriDesc = TextEditingController();
-  TextEditingController TriAmount = TextEditingController();
-
   late Future<Salon> futureSalon;
   late Future<Urban> futureUrban;
   late Future<Motor> futureMotor;
@@ -213,7 +131,7 @@ class _DashboardState extends State<Dashboard> {
                         height: 20,
                       ),
                       ElevatedButton.icon(
-                        onPressed: _print,
+                        onPressed: print,
                         icon: const Icon(Icons.print),
                         label: const Text('Print Receipt'),
                         style: ElevatedButton.styleFrom(
@@ -295,7 +213,7 @@ class _DashboardState extends State<Dashboard> {
                         height: 20,
                       ),
                       ElevatedButton.icon(
-                        onPressed: _print,
+                        onPressed: print,
                         icon: const Icon(Icons.print),
                         label: const Text('Print Receipt'),
                         style: ElevatedButton.styleFrom(
@@ -377,7 +295,7 @@ class _DashboardState extends State<Dashboard> {
                         height: 20,
                       ),
                       ElevatedButton.icon(
-                        onPressed: _print,
+                        onPressed: print,
                         icon: const Icon(Icons.print),
                         label: const Text('Print Receipt'),
                         style: ElevatedButton.styleFrom(
@@ -459,7 +377,7 @@ class _DashboardState extends State<Dashboard> {
                         height: 20,
                       ),
                       ElevatedButton.icon(
-                        onPressed: _print,
+                        onPressed: print,
                         icon: const Icon(Icons.print),
                         label: const Text('Print Receipt'),
                         style: ElevatedButton.styleFrom(
@@ -475,7 +393,14 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const Addvehicle(),
+                ),
+              );
+            },
             child: const Icon(Icons.add),
           ),
           bottomNavigationBar: BottomNavigationBar(items: const [
